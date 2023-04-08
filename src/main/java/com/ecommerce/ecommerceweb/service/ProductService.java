@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerceweb.service;
 
 import com.ecommerce.ecommerceweb.datatransferobject.ProductDTO;
+import com.ecommerce.ecommerceweb.exception.ProductNotExistException;
 import com.ecommerce.ecommerceweb.model.Category;
 import com.ecommerce.ecommerceweb.model.Product;
 import com.ecommerce.ecommerceweb.repository.ProductRepository;
@@ -58,5 +59,13 @@ public class ProductService {
         product.setPrice(productDTO.getPrice());
         product.setDescription(productDTO.getDescription());
         productRepository.save(product);
+    }
+
+    public Product findById(Integer productId) throws ProductNotExistException {
+        Optional<Product> product = productRepository.findById(productId);
+        if (product.isEmpty()){
+            throw new ProductNotExistException("product does not exists:" + productId);
+        }
+        return product.get();
     }
 }

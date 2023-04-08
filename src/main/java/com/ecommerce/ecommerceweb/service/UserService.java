@@ -51,6 +51,7 @@ public class UserService {
         return responseDTO;
     }
 
+    // hash password by md5 algorithm
     private String hashPassword(String password) throws NoSuchAlgorithmException {
         MessageDigest messageDigest = MessageDigest.getInstance("MD5");
         messageDigest.update(password.getBytes());
@@ -72,7 +73,7 @@ public class UserService {
                 throw new FailAuthenticationException("Password is incorrect!");
             }
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+
         }
 
         // if password match then get the token

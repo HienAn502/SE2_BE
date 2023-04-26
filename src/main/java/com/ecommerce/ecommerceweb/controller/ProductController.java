@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,10 +32,24 @@ public class ProductController {
         return new ResponseEntity<>(new ApiResponse(true, "Product added!"), HttpStatus.CREATED);
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<List<ProductDTO>> getProducts(){
         List<ProductDTO> listAllProducts = productService.getAllProducts();
         return new ResponseEntity<>(listAllProducts, HttpStatus.OK);
+    }
+
+    @GetMapping("/{productId}")
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable("productId") int productId) {
+        return new ResponseEntity<>(productService.findProductDTOById(productId), HttpStatus.OK);
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<ProductDTO>> sortProducts(@RequestParam("sort_by") String sort_by, @RequestParam("order") String order) {
+        if (!sort_by.matches("(name|price)") || !order.matches("(ASC|DESC)"))  {
+            return new ResponseEntity<List<ProductDTO>>(new ArrayList<ProductDTO>(), HttpStatus.BAD_REQUEST);
+        }
+        List<ProductDTO> productDTOS = productService.sortProducts(sort_by, order);
+        return new ResponseEntity<>(productDTOS, HttpStatus.OK);
     }
 
     @PostMapping("/update/{productId}")

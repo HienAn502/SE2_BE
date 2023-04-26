@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -75,6 +76,25 @@ public class ProductService {
             throw new ProductNotExistException("product does not exists:" + productId);
         }
         return product.get();
+    }
+
+    public ProductDTO findProductDTOById(Integer productId) {
+        Product product = productRepository.findById(productId).orElseThrow();
+        return getProductDTO(product);
+    }
+
+    public List<ProductDTO> sortProducts(String sort_by, String order) {
+        List<Product> products = new ArrayList<>();
+        if (order.equals("ASC"))
+            products = productRepository.findAll(Sort.by(Sort.Direction.ASC, sort_by));
+        else if (order.equals("DESC"))
+            products = productRepository.findAll(Sort.by(Sort.Direction.DESC, sort_by));
+
+        List<ProductDTO> productDTOS = new ArrayList<>();
+        for (Product product: products){
+            productDTOS.add(getProductDTO(product));
+        }
+        return productDTOS;
     }
 
     public List<ProductDTO> searchProductsByCategory(String categoryName) {

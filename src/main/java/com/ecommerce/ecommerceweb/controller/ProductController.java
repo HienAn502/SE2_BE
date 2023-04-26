@@ -46,4 +46,10 @@ public class ProductController {
         productService.updateProduct(productDTO, productId);
         return new ResponseEntity<>(new ApiResponse(true, "Product updated!"), HttpStatus.OK);
     }
+
+    @GetMapping("/search/")
+    public ResponseEntity<List<ProductDTO>> searchProducts(@RequestParam(value = "keyword") String keyword) {
+        List<ProductDTO> products = productService.searchProducts(keyword);
+        return new ResponseEntity<>(products, HttpStatus.OK);
+    }
 }

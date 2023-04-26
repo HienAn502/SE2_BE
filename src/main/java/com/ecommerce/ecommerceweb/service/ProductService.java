@@ -1,11 +1,16 @@
 package com.ecommerce.ecommerceweb.service;
 
 import com.ecommerce.ecommerceweb.datatransferobject.ProductDTO;
+import com.ecommerce.ecommerceweb.exception.CategoryNotExistException;
 import com.ecommerce.ecommerceweb.exception.ProductNotExistException;
 import com.ecommerce.ecommerceweb.model.Category;
 import com.ecommerce.ecommerceweb.model.Product;
+import com.ecommerce.ecommerceweb.repository.CategoryRepository;
 import com.ecommerce.ecommerceweb.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +22,9 @@ import java.util.Optional;
 public class ProductService {
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    CategoryRepository categoryRepository;
 
     public void createProduct(ProductDTO productDTO, Category category) {
         Product product = new Product();
@@ -68,4 +76,29 @@ public class ProductService {
         }
         return product.get();
     }
+
+    public List<ProductDTO> searchProductsByCategory(String categoryName) {
+        Category category = categoryRepository.findByCategoryName(categoryName.toLowerCase());
+        Pageable pageable = PageRequest.of(0, 20);
+        Page<Product> products = productRepository.searchProductByCategory(category, pageable);
+
+        List<ProductDTO> productDTOS = new ArrayList<>();
+        for (Product product: products){
+            productDTOS.add(getProductDTO(product));
+        }
+        return productDTOS;
+    }
+
+    public List<ProductDTO> searchProducts(String keyword) {
+        Pageable pageable = PageRequest.of(0, 20);
+        Page<Product> products = productRepository.searchProducts(keyword.toLowerCase(), pageable);
+
+        List<ProductDTO> productDTOS = new ArrayList<>();
+        for (Product product: products){
+            productDTOS.add(getProductDTO(product));
+        }
+        return productDTOS;
+    }
+
+
 }

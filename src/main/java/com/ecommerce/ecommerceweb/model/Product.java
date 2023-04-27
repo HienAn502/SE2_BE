@@ -16,11 +16,15 @@ public class Product {
     private @NotNull double price;
     private @NotNull String description;
 
+    @ManyToOne
+    @JoinColumn(name = "voucher_id", nullable = true)
+    private Voucher voucher;
+
     // one to many with category -> product
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "category_id")
-    Category category;
+    private Category category;
 
     public Integer getId() {
         return id;
@@ -47,6 +51,7 @@ public class Product {
     }
 
     public double getPrice() {
+        if (voucher != null) return price * voucher.getRate();
         return price;
     }
 
@@ -68,5 +73,13 @@ public class Product {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public Voucher getVoucher() {
+        return voucher;
+    }
+
+    public void setVoucher(Voucher voucher) {
+        this.voucher = voucher;
     }
 }

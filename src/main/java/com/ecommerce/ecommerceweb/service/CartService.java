@@ -125,6 +125,26 @@ public class CartService {
         cartItemRepository.delete(cart);
     }
 
+    public void saveCart(CartDTO cartDTO, User user) {
+        Cart cart = user.getCart();
+        if (cart == null) cart = new Cart();
+
+        List<CartItem> cartItems = new ArrayList<>();
+
+        for (CartItemDTO cartItemDTO : cartDTO.getCartItemDTOList()) {
+            CartItem cartItem = new CartItem();
+            cartItem.setCart(cart);
+            cartItem.setProduct(cartItemDTO.getProduct());
+            cartItem.setQuantity(cartItemDTO.getQuantity());
+
+            cartItems.add(cartItem);
+        }
+        cart.setCartItemList(cartItems);
+        cart.setUser(user);
+
+        cartRepository.save(cart);
+    }
+
     private CartItem findCartItem(List<CartItem> cartItems, int productId) {
         if (cartItems == null) return null;
         CartItem cartItem = null;

@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerceweb.model;
 
 import javax.persistence.*;
+import java.util.*;
 
 @Entity
 @Table(name = "user")
@@ -18,6 +19,9 @@ public class User {
     private String email;
     @Column(name = "password")
     private String password;
+
+    @OneToMany(mappedBy = "user")
+    private List<Order> orderList;
 
     public User(String firstName, String lastName,String phoneNumber, String email, String password) {
         this.firstName = firstName;

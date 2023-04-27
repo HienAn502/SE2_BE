@@ -23,7 +23,7 @@ public class AuthenticationTokenService {
 
     public User getUser(String token){
         AuthenticationToken token1 = tokenRepository.findByToken(token);
-        if (Objects.isNull(token)){
+        if (Objects.isNull(token1)){
             return null;
         }
         return token1.getUser();

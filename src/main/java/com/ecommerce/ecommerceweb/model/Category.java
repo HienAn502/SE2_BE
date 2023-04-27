@@ -2,6 +2,7 @@ package com.ecommerce.ecommerceweb.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.*;
 
 @Entity
 @Table(name = "category")
@@ -15,6 +16,9 @@ public class Category {
     private @NotBlank String description;
     @Column(name = "image_url")
     private @NotBlank String imageUrl;
+
+    @OneToMany(mappedBy = "category")
+    private List<Product> productList;
 
     public Integer getId() {
         return id;

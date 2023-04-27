@@ -1,7 +1,7 @@
 package com.ecommerce.ecommerceweb.model;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.util.*;
 
 @Entity
 @Table(name = "cart")
@@ -13,15 +13,19 @@ public class Cart {
     @Column(name = "created_date")
     private Date createdDate;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cart")
+    private List<CartItem> cartItemList;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    private int quantity;
+    public Cart(Integer id, Date createdDate, List<CartItem> cartItemList, User user) {
+        this.id = id;
+        this.createdDate = createdDate;
+        this.cartItemList = cartItemList;
+        this.user = user;
+    }
 
     public Cart() {
     }
@@ -42,12 +46,12 @@ public class Cart {
         this.createdDate = createdDate;
     }
 
-    public Product getProduct() {
-        return product;
+    public List<CartItem> getCartItemList() {
+        return cartItemList;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setCartItemList(List<CartItem> cartItemList) {
+        this.cartItemList = cartItemList;
     }
 
     public User getUser() {
@@ -58,11 +62,4 @@ public class Cart {
         this.user = user;
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
 }

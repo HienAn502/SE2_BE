@@ -4,11 +4,16 @@ import com.ecommerce.ecommerceweb.datatransferobject.cart.AddItemToCartDTO;
 import com.ecommerce.ecommerceweb.datatransferobject.cart.CartDTO;
 import com.ecommerce.ecommerceweb.datatransferobject.cart.CartItemDTO;
 import com.ecommerce.ecommerceweb.exception.CommonException;
+import com.ecommerce.ecommerceweb.exception.ItemNotExistException;
 import com.ecommerce.ecommerceweb.model.Cart;
+import com.ecommerce.ecommerceweb.model.CartItem;
 import com.ecommerce.ecommerceweb.model.Product;
 import com.ecommerce.ecommerceweb.model.User;
+import com.ecommerce.ecommerceweb.repository.CartItemRepository;
 import com.ecommerce.ecommerceweb.repository.CartRepository;
+import com.ecommerce.ecommerceweb.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,55 +25,113 @@ import java.util.Optional;
 public class CartService {
     @Autowired
     ProductService productService;
-
     @Autowired
     CartRepository cartRepository;
+    @Autowired
+    CartItemRepository cartItemRepository;
+    @Autowired
+    UserRepository userRepository;
 
     public void addToCart(AddItemToCartDTO addItemToCartDTO, User user) {
         // check if product chosen is valid
         Product product = productService.findById(addItemToCartDTO.getProductId());
+        // get user's cart
+        Cart cart = cartRepository.findByUser(user);
 
-        Cart cart = new Cart();
-        cart.setProduct(product);
+        if (cart == null) {
+            cart = new Cart();
+            cart.setCreatedDate(new Date());
+        }
+
+        List<CartItem> cartItems = cart.getCartItemList();
+        CartItem cartItem = findCartItem(cartItems, product.getId());
+
+        if (cartItems == null) {
+            cartItems = new ArrayList<>();
+            if (cartItem == null) {
+                cartItem = new CartItem();
+                cartItem.setProduct(product);
+                cartItem.setQuantity(addItemToCartDTO.getQuantity());
+                cartItem.setCart(cart);
+
+                cartItems.add(cartItem);
+                cartItemRepository.save(cartItem);
+            }
+        } else {
+            if (cartItem == null) {
+                cartItem = new CartItem();
+                cartItem.setProduct(product);
+                cartItem.setQuantity(addItemToCartDTO.getQuantity());
+                cartItem.setCart(cart);
+
+                cartItems.add(cartItem);
+                cartItemRepository.save(cartItem);
+            } else {
+                cartItem.setQuantity(cartItem.getQuantity() + addItemToCartDTO.getQuantity());
+                cartItemRepository.save(cartItem);
+            }
+        }
+
+        cart.setCartItemList(cartItems);
         cart.setUser(user);
-        cart.setQuantity(addItemToCartDTO.getQuantity());
-        cart.setCreatedDate(new Date());
 
-        // save cart state
         cartRepository.save(cart);
     }
 
     public CartDTO listAllCartItems(User user) {
-        List<Cart> cartList = cartRepository.findAllByUserOrderByCreatedDateDesc(user);
+        // find cart of user
+        Cart cart = cartRepository.findByUser(user);
 
-        List<CartItemDTO> cartItem = new ArrayList<>();
+        if (cart == null) return new CartDTO();
+
+        List<CartItemDTO> cartItemsDTO = new ArrayList<>();
         double totalPrice = 0;
 
-        for (Cart cart : cartList){
-            CartItemDTO cartItemDTO = new CartItemDTO(cart);
-            totalPrice += cart.getProduct().getPrice() * cartItemDTO.getQuantity();
+        for (CartItem cartItem : cart.getCartItemList()){
+            CartItemDTO cartItemDTO = new CartItemDTO(cartItem);
+            totalPrice += cartItemDTO.totalPrice();
 
-            cartItem.add(cartItemDTO);
+            cartItemsDTO.add(cartItemDTO);
         }
 
         CartDTO cartDTO = new CartDTO();
-        cartDTO.setCartItemDTOList(cartItem);
+        cartDTO.setCartItemDTOList(cartItemsDTO);
         cartDTO.setTotalPrice(totalPrice);
         return cartDTO;
     }
 
+    public void updateItem(AddItemToCartDTO cartItemDTO, User user) {
+        Cart cart = user.getCart();
+        List<CartItem> cartItems = cart.getCartItemList();
+        CartItem item = findCartItem(cartItems, cartItemDTO.getProductId());
+        if (item == null) throw new ItemNotExistException("Item not exist");
+
+        item.setQuantity(cartItemDTO.getQuantity());
+        cartItemRepository.save(item);
+    }
+
     public void deleteItemFromCart(Integer itemID, User user) {
         // check if user has the item
-        Optional<Cart> optionalCart = cartRepository.findById(itemID);
+        Optional<CartItem> optionalCart = cartItemRepository.findById(itemID);
         if (optionalCart.isEmpty()){
             throw new CommonException("Cart item is invalid! Item id:" + itemID);
         }
 
-        Cart cart = optionalCart.get();
-        if (cart.getUser() != user) {
+        CartItem cart = optionalCart.get();
+        if (cart.getCart().getUser() != user) {
             throw new CommonException("This item doesn't belong to this user! Item id: " + itemID);
         }
 
-        cartRepository.delete(cart);
+        cartItemRepository.delete(cart);
+    }
+
+    private CartItem findCartItem(List<CartItem> cartItems, int productId) {
+        if (cartItems == null) return null;
+        CartItem cartItem = null;
+        for (CartItem item : cartItems) {
+            if (item.getProduct().getId() == productId)
+                cartItem = item;
+        }
+        return cartItem;
     }
 }

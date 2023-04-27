@@ -3,6 +3,8 @@ package com.ecommerce.ecommerceweb.controller;
 import com.ecommerce.ecommerceweb.aGeneral.ApiResponse;
 import com.ecommerce.ecommerceweb.datatransferobject.cart.AddItemToCartDTO;
 import com.ecommerce.ecommerceweb.datatransferobject.cart.CartDTO;
+import com.ecommerce.ecommerceweb.datatransferobject.cart.CartItemDTO;
+import com.ecommerce.ecommerceweb.exception.ItemNotExistException;
 import com.ecommerce.ecommerceweb.model.Product;
 import com.ecommerce.ecommerceweb.model.User;
 import com.ecommerce.ecommerceweb.service.AuthenticationTokenService;
@@ -49,6 +51,21 @@ public class CartController {
         return new ResponseEntity<>(cartDTO, HttpStatus.OK);
     }
 
+    @PutMapping("/update/{cartItemID}")
+    public ResponseEntity<ApiResponse> updateCartItem(@PathVariable("cartItemID") int itemID, @RequestParam("token") String token, @RequestBody AddItemToCartDTO cartItemDTO) {
+        // check if token is valid
+        authenticationTokenService.authenticateToken(token);
+
+        // check if user is valid
+        User user = authenticationTokenService.getUser(token);
+
+        try {
+            cartService.updateItem(cartItemDTO, user);
+        } catch (ItemNotExistException e) {
+            return new ResponseEntity<>(new ApiResponse(false, "Invalid item id"), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(new ApiResponse(true, "Item deleted from cart!"), HttpStatus.OK);
+    }
 
     // delete cart method api
     @DeleteMapping("/delete/{cartItemID}")
@@ -59,7 +76,11 @@ public class CartController {
         // check if user is valid
         User user = authenticationTokenService.getUser(token);
 
-        cartService.deleteItemFromCart(itemID, user);
+        try {
+            cartService.deleteItemFromCart(itemID, user);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ApiResponse(false, "Invalid item id"), HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(new ApiResponse(true, "Item deleted from cart!"), HttpStatus.OK);
     }
 }

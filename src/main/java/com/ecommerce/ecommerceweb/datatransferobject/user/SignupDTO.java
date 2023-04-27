@@ -47,4 +47,5 @@ public class SignupDTO {
     }
 
     private String password;
+
 }

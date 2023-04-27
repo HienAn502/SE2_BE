@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerceweb.datatransferobject.cart;
 
 import com.ecommerce.ecommerceweb.model.Cart;
+import com.ecommerce.ecommerceweb.model.CartItem;
 import com.ecommerce.ecommerceweb.model.Product;
 
 public class CartItemDTO {
@@ -36,9 +37,13 @@ public class CartItemDTO {
 
     }
 
-    public CartItemDTO(Cart cart) {
-        this.id = cart.getId();
-        this.quantity = cart.getQuantity();
-        this.setProduct(cart.getProduct());
+    public double totalPrice() {
+        return this.quantity * this.product.getPrice();
+    }
+
+    public CartItemDTO(CartItem cartItem) {
+        this.id = cartItem.getId();
+        this.product = cartItem.getProduct();
+        this.quantity = cartItem.getQuantity();
     }
 }

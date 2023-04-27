@@ -20,15 +20,19 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @OneToMany(mappedBy = "user")
+    @OneToOne(cascade = CascadeType.ALL,mappedBy = "user")
+    private Cart cart;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private List<Order> orderList;
 
-    public User(String firstName, String lastName,String phoneNumber, String email, String password) {
+    public User(String firstName, String lastName,String phoneNumber, String email, String password, Cart cart, List<Order> orderList) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.password = password;
+        this.cart = cart;
+        this.orderList = orderList;
     }
 
     public User() {
@@ -81,5 +85,21 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
+
+    public List<Order> getOrderList() {
+        return orderList;
+    }
+
+    public void setOrderList(List<Order> orderList) {
+        this.orderList = orderList;
     }
 }

@@ -25,7 +25,7 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "order")
     private List<OrderDetail> orderDetailList;
 
     public Order(int id, Date orderDate, Date deliveryDate, double totalPrice, double shippingFee, String orderStatus, String notes, User user, List<OrderDetail> orderDetailList) {

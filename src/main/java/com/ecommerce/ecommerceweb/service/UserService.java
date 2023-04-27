@@ -7,7 +7,9 @@ import com.ecommerce.ecommerceweb.datatransferobject.user.SignupDTO;
 import com.ecommerce.ecommerceweb.exception.CommonException;
 import com.ecommerce.ecommerceweb.exception.FailAuthenticationException;
 import com.ecommerce.ecommerceweb.model.AuthenticationToken;
+import com.ecommerce.ecommerceweb.model.Cart;
 import com.ecommerce.ecommerceweb.model.User;
+import com.ecommerce.ecommerceweb.repository.CartRepository;
 import com.ecommerce.ecommerceweb.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ import javax.transaction.Transactional;
 import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Objects;
 
 @Service
@@ -24,6 +28,8 @@ public class UserService {
     UserRepository userRepository;
     @Autowired
     AuthenticationTokenService authenticationTokenService;
+    @Autowired
+    CartRepository cartRepository;
     @Transactional
         public ResponseDTO signup(SignupDTO signupDTO) {
         // if user already exist, cant sign up
@@ -38,9 +44,14 @@ public class UserService {
         } catch (NoSuchAlgorithmException e) {
             throw new CommonException(e.getMessage());
         }
+        Cart cart = new Cart();
+        cart.setCartItemList(new ArrayList<>());
+        cart.setCreatedDate(new Date());
 
         // save user to db
-        User user = new User(signupDTO.getFirstName(), signupDTO.getLastName(), signupDTO.getPhoneNumber(), signupDTO.getEmail(), encryptedPassword);
+        User user = new User(signupDTO.getFirstName(), signupDTO.getLastName(), signupDTO.getPhoneNumber(), signupDTO.getEmail(), encryptedPassword,cart,  new ArrayList<>());
+        cart.setUser(user);
+        cartRepository.save(cart);
         userRepository.save(user);
 
         // generate token

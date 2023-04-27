@@ -17,7 +17,7 @@ public class Category {
     @Column(name = "image_url")
     private @NotBlank String imageUrl;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "category")
     private List<Product> productList;
 
     public Integer getId() {

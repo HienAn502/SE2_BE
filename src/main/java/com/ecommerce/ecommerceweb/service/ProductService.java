@@ -45,6 +45,7 @@ public class ProductService {
         productDTO.setDescription(product.getDescription());
         productDTO.setCategoryId(product.getCategory().getId());
         productDTO.setId(product.getId());
+        productDTO.setDiscount_price(product.getDiscountPrice());
         return productDTO;
     }
 

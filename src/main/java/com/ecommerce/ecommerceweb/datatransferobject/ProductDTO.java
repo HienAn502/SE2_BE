@@ -1,5 +1,7 @@
 package com.ecommerce.ecommerceweb.datatransferobject;
 
+import org.springframework.lang.Nullable;
+
 import javax.validation.constraints.NotNull;
 
 public class ProductDTO {
@@ -10,7 +12,17 @@ public class ProductDTO {
     private @NotNull String description;
     private @NotNull Integer categoryId;
 
+    private @Nullable double discount_price;
+
     public ProductDTO() {
+    }
+
+    public double getDiscount_price() {
+        return discount_price;
+    }
+
+    public void setDiscount_price(double discount_price) {
+        this.discount_price = discount_price;
     }
 
     public String getName() {

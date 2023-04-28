@@ -45,10 +45,12 @@ public class VoucherService {
         Voucher voucher = voucherRepository.findById(voucherId).orElseThrow();
         Product product = productRepository.findById(productId).orElseThrow();
         voucher.getAppliedProducts().add(product);
-        product.setVoucher(voucher);
+        if (!voucher.isExpired()) {
+            product.setVoucher(voucher);
+            product.setDiscountPrice(product.getPrice() * voucher.getRate());
 
-        voucherRepository.save(voucher);
-        productRepository.save(product);
+            voucherRepository.save(voucher);
+            productRepository.save(product);
+        }
     }
-
 }

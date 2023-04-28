@@ -65,4 +65,8 @@ public class Voucher {
     public void setAppliedProducts(List<Product> appliedProducts) {
         this.appliedProducts = appliedProducts;
     }
+
+    public boolean isExpired() {
+        return expiredDate.compareTo(new Date()) <= 0;
+    }
 }

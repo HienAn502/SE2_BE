@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.*;
 
 @RestController
 @RequestMapping("/voucher")
@@ -17,6 +18,11 @@ public class VoucherController {
 
     @Autowired
     ProductService productService;
+
+    @GetMapping("/")
+    public List<Voucher> getVoucher() {
+        return voucherService.voucherList();
+    }
 
     @PostMapping("/create")
     public ResponseEntity<ApiResponse> createVoucher(@RequestBody Voucher voucher) {

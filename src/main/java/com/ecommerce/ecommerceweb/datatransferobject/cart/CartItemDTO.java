@@ -38,6 +38,8 @@ public class CartItemDTO {
     }
 
     public double totalPrice() {
+        if (this.product.getVoucher() != null && !this.product.getVoucher().isExpired())
+            return this.quantity * this.product.getDiscountPrice();
         return this.quantity * this.product.getPrice();
     }
 

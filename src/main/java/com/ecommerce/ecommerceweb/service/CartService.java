@@ -11,6 +11,7 @@ import com.ecommerce.ecommerceweb.model.Product;
 import com.ecommerce.ecommerceweb.model.User;
 import com.ecommerce.ecommerceweb.repository.CartItemRepository;
 import com.ecommerce.ecommerceweb.repository.CartRepository;
+import com.ecommerce.ecommerceweb.repository.ProductRepository;
 import com.ecommerce.ecommerceweb.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -31,6 +32,8 @@ public class CartService {
     CartItemRepository cartItemRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    ProductRepository productRepository;
 
     public void addToCart(AddItemToCartDTO addItemToCartDTO, User user) {
         // check if product chosen is valid

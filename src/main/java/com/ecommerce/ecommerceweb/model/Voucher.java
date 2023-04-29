@@ -1,5 +1,8 @@
 package com.ecommerce.ecommerceweb.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.*;
 
@@ -14,9 +17,6 @@ public class Voucher {
     private double rate;
     private Date createdDate;
     private Date expiredDate;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "voucher")
-    private List<Product> appliedProducts;
 
     public int getId() {
         return id;
@@ -56,14 +56,6 @@ public class Voucher {
 
     public void setExpiredDate(Date expiredDate) {
         this.expiredDate = expiredDate;
-    }
-
-    public List<Product> getAppliedProducts() {
-        return appliedProducts;
-    }
-
-    public void setAppliedProducts(List<Product> appliedProducts) {
-        this.appliedProducts = appliedProducts;
     }
 
     public boolean isExpired() {

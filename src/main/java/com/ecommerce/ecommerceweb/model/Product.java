@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerceweb.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -17,6 +18,7 @@ public class Product {
     private @NotNull String description;
 
     @ManyToOne
+    @JsonIgnoreProperties
     @JoinColumn(name = "voucher_id", nullable = true)
     private Voucher voucher;
 

@@ -27,7 +27,6 @@ public class VoucherService {
         voucher.setRate(updateVoucher.getRate());
         voucher.setCreatedDate(updateVoucher.getCreatedDate());
         voucher.setExpiredDate(updateVoucher.getExpiredDate());
-        voucher.setAppliedProducts(updateVoucher.getAppliedProducts());
 
         voucherRepository.save(voucher);
     }
@@ -44,10 +43,9 @@ public class VoucherService {
     public void applyVoucher(int productId, int voucherId) {
         Voucher voucher = voucherRepository.findById(voucherId).orElseThrow();
         Product product = productRepository.findById(productId).orElseThrow();
-        voucher.getAppliedProducts().add(product);
         if (!voucher.isExpired()) {
-            product.setVoucher(voucher);
             product.setDiscountPrice(product.getPrice() * voucher.getRate());
+            product.setVoucher(voucher);
 
             voucherRepository.save(voucher);
             productRepository.save(product);

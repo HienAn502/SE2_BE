@@ -20,7 +20,14 @@ public class VoucherService {
     }
 
     public List<Voucher> voucherList() {return voucherRepository.findAll();}
-
+    public List<Voucher> applicableVoucherList() {
+        List<Voucher> applicableVoucher = new ArrayList<>();
+        for (Voucher voucher : voucherRepository.findAll()) {
+            if (!voucher.isExpired())
+                applicableVoucher.add(voucher);
+        }
+        return applicableVoucher;
+    }
     public void editVoucher(int voucherId, Voucher updateVoucher) {
         Voucher voucher = voucherRepository.getReferenceById(voucherId);
         voucher.setName(updateVoucher.getName());

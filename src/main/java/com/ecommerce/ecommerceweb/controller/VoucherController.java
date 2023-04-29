@@ -23,6 +23,10 @@ public class VoucherController {
     public List<Voucher> getVoucher() {
         return voucherService.voucherList();
     }
+    @GetMapping("/applicable-vouchers")
+    public List<Voucher> getApplicableVoucher() {
+        return voucherService.applicableVoucherList();
+    }
 
     @PostMapping("/create")
     public ResponseEntity<ApiResponse> createVoucher(@RequestBody Voucher voucher) {

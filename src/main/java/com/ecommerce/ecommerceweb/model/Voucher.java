@@ -2,6 +2,7 @@ package com.ecommerce.ecommerceweb.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.util.*;
@@ -15,6 +16,7 @@ public class Voucher {
 
     private String name;
     private double rate;
+    @CreatedDate
     private Date createdDate;
     private Date expiredDate;
 

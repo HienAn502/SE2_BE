@@ -16,6 +16,7 @@ public class VoucherService {
     ProductRepository productRepository;
 
     public void createVoucher(Voucher voucher) {
+        voucher.setCreatedDate(new Date());
         voucherRepository.save(voucher);
     }
 

@@ -67,4 +67,13 @@ public class ProductController {
         List<ProductDTO> products = productService.searchProducts(keyword);
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
+
+    @DeleteMapping("/delete/{productId}")
+    public ResponseEntity<ApiResponse> deleteProduct(@PathVariable("productId") int productId) {
+        if (productService.delete(productId)) {
+            return new ResponseEntity<>(new ApiResponse(true, "Deleted succeed!"), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new ApiResponse(false, "Product id does not exist!"), HttpStatus.NOT_FOUND);
+        }
+    }
 }

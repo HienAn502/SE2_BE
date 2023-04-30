@@ -49,4 +49,13 @@ public class CategoryController {
         List<ProductDTO> products = productService.searchProductsByCategory(categoryName);
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
+
+    @DeleteMapping("/delete/{categoryId}")
+    public ResponseEntity<ApiResponse> deleteCategory(@PathVariable("categoryId") int categoryId) {
+        if (categoryService.delete(categoryId)) {
+            return new ResponseEntity<>(new ApiResponse(true, "Deleted succeed!"), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new ApiResponse(false, "Category id does not exist!"), HttpStatus.NOT_FOUND);
+        }
+    }
 }

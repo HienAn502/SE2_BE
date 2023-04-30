@@ -121,5 +121,13 @@ public class ProductService {
         return productDTOS;
     }
 
+    public boolean delete(int productId) {
+        Optional<Product> product = productRepository.findById(productId);
+        if (product.isEmpty()){
+            return false;
+        }
+        productRepository.delete(product.get());
+        return true;
+    }
 
 }

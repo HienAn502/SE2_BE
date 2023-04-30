@@ -34,7 +34,7 @@ public class VoucherController {
         return new ResponseEntity<>(new ApiResponse(true, "A new voucher is created!"), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{voucherId}")
+    @DeleteMapping("/delete/{voucherId}")
     public ResponseEntity<ApiResponse> deleteVoucher(@PathVariable("voucherId") int voucherId) {
         if (!voucherService.findById(voucherId)){
             return new ResponseEntity<>(new ApiResponse(false, "Voucher does not exist!"), HttpStatus.NOT_FOUND);

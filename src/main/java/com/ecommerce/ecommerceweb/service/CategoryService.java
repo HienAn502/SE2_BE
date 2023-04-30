@@ -1,11 +1,13 @@
 package com.ecommerce.ecommerceweb.service;
 
 import com.ecommerce.ecommerceweb.model.Category;
+import com.ecommerce.ecommerceweb.model.Product;
 import com.ecommerce.ecommerceweb.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryService {
@@ -25,6 +27,15 @@ public class CategoryService {
         category.setDescription(updateCategory.getDescription());
         category.setImageUrl(updateCategory.getImageUrl());
         categoryRepository.save(category);
+    }
+
+    public boolean delete(int categoryId) {
+        Optional<Category> category = categoryRepository.findById(categoryId);
+        if (category.isEmpty()){
+            return false;
+        }
+        categoryRepository.delete(category.get());
+        return true;
     }
 
     public boolean findById(int categoryId) {

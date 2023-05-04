@@ -10,10 +10,12 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -22,7 +24,6 @@ public class OrderService {
     String baseURL;
     @Value("${STRIPE_SECRET_KEY}")
     String apiKey;
-<<<<<<< HEAD
 
 //    public void saveOrder(CartDTO cartDTO, User user) {
 //        Order order = new Order();
@@ -52,7 +53,6 @@ public class OrderService {
 //        cartService.saveCart(cartDTO, user);
 //        orderRepository.save(order);
 //    }
-=======
     @Autowired
     OrderRepository orderRepository;
     @Autowired
@@ -106,7 +106,7 @@ public class OrderService {
         cartService.saveNewCart(cart);
         orderRepository.save(order);
     }
->>>>>>> branch_voucher
+
 
     public Session createSession(List<CheckoutItemDTO> checkoutItemDTOList) throws StripeException {
        // success and failure urls

@@ -128,6 +128,19 @@ public class CartService {
         cartItemRepository.delete(cart);
     }
 
+    public void deleteItemOfUser(User user) {
+        List<CartItem> cartItems = cartItemRepository.findAll();
+
+        for (CartItem cartItem : cartItems) {
+            if (cartItem.getCart().getUser() == user) {
+                cartItemRepository.delete(cartItem);
+            }
+        }
+    }
+
+    public void saveNewCart(Cart cart) {
+        cartRepository.save(cart);
+    }
     public void saveCart(CartDTO cartDTO, User user) {
         Cart cart = user.getCart();
         if (cart == null) cart = new Cart();
@@ -156,18 +169,5 @@ public class CartService {
                 cartItem = item;
         }
         return cartItem;
-    }
-
-    public void deleteItemOfUser(User user) {
-        List<CartItem> cartItems = cartItemRepository.findAll();
-        for (CartItem cartItem : cartItems) {
-            if (cartItem.getCart().getUser() == user) {
-                cartItemRepository.delete(cartItem);
-            }
-        }
-    }
-
-    public void saveNewCart(Cart cart) {
-        cartRepository.save(cart);
     }
 }

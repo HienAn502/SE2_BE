@@ -1,11 +1,10 @@
 package com.ecommerce.ecommerceweb.service;
 
 import com.ecommerce.ecommerceweb.datatransferobject.checkout.CheckoutItemDTO;
-<<<<<<< HEAD
-=======
+
 import com.ecommerce.ecommerceweb.model.*;
 import com.ecommerce.ecommerceweb.repository.*;
->>>>>>> branch_voucher
+
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;

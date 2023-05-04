@@ -3,12 +3,8 @@ package com.ecommerce.ecommerceweb.service;
 import com.ecommerce.ecommerceweb.datatransferobject.cart.CartDTO;
 import com.ecommerce.ecommerceweb.datatransferobject.cart.CartItemDTO;
 import com.ecommerce.ecommerceweb.datatransferobject.checkout.CheckoutItemDTO;
-import com.ecommerce.ecommerceweb.model.Order;
-import com.ecommerce.ecommerceweb.model.OrderDetail;
-import com.ecommerce.ecommerceweb.model.User;
-import com.ecommerce.ecommerceweb.repository.CartItemRepository;
-import com.ecommerce.ecommerceweb.repository.OrderDetailRepository;
-import com.ecommerce.ecommerceweb.repository.OrderRepository;
+import com.ecommerce.ecommerceweb.model.*;
+import com.ecommerce.ecommerceweb.repository.*;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
@@ -35,33 +31,49 @@ public class OrderService {
     CartService cartService;
     @Autowired
     CartItemRepository cartItemRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    ProductRepository productRepository;
 
-    public void saveOrder(CartDTO cartDTO, User user) {
+    private double getTotalPrice(List<CheckoutItemDTO> checkoutItemDTOList) {
+        double totalPrice = 0;
+        for (CheckoutItemDTO checkoutItemDTO : checkoutItemDTOList.toArray(new CheckoutItemDTO[0])) {
+            totalPrice += checkoutItemDTO.getPrice() * checkoutItemDTO.getQuantity();
+        }
+        return totalPrice;
+    }
+    public void saveOrder(List<CheckoutItemDTO> checkoutItemDTOList) {
+        User user = userRepository.findById(checkoutItemDTOList.get(0).getUserId()+1).orElseThrow();
         Order order = new Order();
         order.setOrderStatus("PENDING");
         order.setOrderDate(new Date());
         order.setUser(user);
-        order.setTotalPrice(cartDTO.getTotalPrice());
+        order.setTotalPrice(getTotalPrice(checkoutItemDTOList));
+        System.out.println(getTotalPrice(checkoutItemDTOList));
         List<OrderDetail> orderDetailList = new ArrayList<>();
 
-        for (CartItemDTO cartItemDTO : cartDTO.getCartItemDTOList()) {
+        Cart cart = user.getCart();
+        orderRepository.save(order);
+
+        for (CheckoutItemDTO checkoutItemDTO : checkoutItemDTOList.toArray(new CheckoutItemDTO[0])) {
             OrderDetail orderDetail = new OrderDetail();
             orderDetail.setOrder(order);
-            orderDetail.setProduct(cartItemDTO.getProduct());
-            orderDetail.setQuantity(cartItemDTO.getQuantity());
-            orderDetail.setUnitPrice(cartItemDTO.getProduct().getPrice());
-            orderDetail.setTotalPrice(cartItemDTO.totalPrice());
+            Product product = productRepository.findById(checkoutItemDTO.getProductId()).orElseThrow();
+            orderDetail.setProduct(product);
+            orderDetail.setQuantity(checkoutItemDTO.getQuantity());
+            orderDetail.setUnitPrice(checkoutItemDTO.getPrice());
+            orderDetail.setTotalPrice(checkoutItemDTO.getPrice() * checkoutItemDTO.getQuantity());
 
             orderDetailRepository.save(orderDetail);
             orderDetailList.add(orderDetail);
-            cartService.deleteItemFromCart(cartItemDTO.getId(), user);
         }
 
-        cartDTO.setCartItemDTOList(new ArrayList<>());
-        cartDTO.setTotalPrice(0);
+        cart.setCartItemList(new ArrayList<>());
         order.setOrderDetailList(orderDetailList);
 
-        cartService.saveCart(cartDTO, user);
+        cartService.deleteItemOfUser(user);
+        cartService.saveNewCart(cart);
         orderRepository.save(order);
     }
 

@@ -1,24 +1,14 @@
 package com.ecommerce.ecommerceweb.service;
 
-import com.ecommerce.ecommerceweb.datatransferobject.cart.CartDTO;
-import com.ecommerce.ecommerceweb.datatransferobject.cart.CartItemDTO;
 import com.ecommerce.ecommerceweb.datatransferobject.checkout.CheckoutItemDTO;
-import com.ecommerce.ecommerceweb.model.Order;
-import com.ecommerce.ecommerceweb.model.OrderDetail;
-import com.ecommerce.ecommerceweb.model.User;
-import com.ecommerce.ecommerceweb.repository.CartItemRepository;
-import com.ecommerce.ecommerceweb.repository.OrderDetailRepository;
-import com.ecommerce.ecommerceweb.repository.OrderRepository;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -27,43 +17,35 @@ public class OrderService {
     String baseURL;
     @Value("${STRIPE_SECRET_KEY}")
     String apiKey;
-    @Autowired
-    OrderRepository orderRepository;
-    @Autowired
-    OrderDetailRepository orderDetailRepository;
-    @Autowired
-    CartService cartService;
-    @Autowired
-    CartItemRepository cartItemRepository;
 
-    public void saveOrder(CartDTO cartDTO, User user) {
-        Order order = new Order();
-        order.setOrderStatus("PENDING");
-        order.setOrderDate(new Date());
-        order.setUser(user);
-        order.setTotalPrice(cartDTO.getTotalPrice());
-        List<OrderDetail> orderDetailList = new ArrayList<>();
-
-        for (CartItemDTO cartItemDTO : cartDTO.getCartItemDTOList()) {
-            OrderDetail orderDetail = new OrderDetail();
-            orderDetail.setOrder(order);
-            orderDetail.setProduct(cartItemDTO.getProduct());
-            orderDetail.setQuantity(cartItemDTO.getQuantity());
-            orderDetail.setUnitPrice(cartItemDTO.getProduct().getPrice());
-            orderDetail.setTotalPrice(cartItemDTO.totalPrice());
-
-            orderDetailRepository.save(orderDetail);
-            orderDetailList.add(orderDetail);
-            cartService.deleteItemFromCart(cartItemDTO.getId(), user);
-        }
-
-        cartDTO.setCartItemDTOList(new ArrayList<>());
-        cartDTO.setTotalPrice(0);
-        order.setOrderDetailList(orderDetailList);
-
-        cartService.saveCart(cartDTO, user);
-        orderRepository.save(order);
-    }
+//    public void saveOrder(CartDTO cartDTO, User user) {
+//        Order order = new Order();
+//        order.setOrderStatus("PENDING");
+//        order.setOrderDate(new Date());
+//        order.setUser(user);
+//        order.setTotalPrice(cartDTO.getTotalPrice());
+//        List<OrderDetail> orderDetailList = new ArrayList<>();
+//
+//        for (CartItemDTO cartItemDTO : cartDTO.getCartItemDTOList()) {
+//            OrderDetail orderDetail = new OrderDetail();
+//            orderDetail.setOrder(order);
+//            orderDetail.setProduct(cartItemDTO.getProduct());
+//            orderDetail.setQuantity(cartItemDTO.getQuantity());
+//            orderDetail.setUnitPrice(cartItemDTO.getProduct().getPrice());
+//            orderDetail.setTotalPrice(cartItemDTO.totalPrice());
+//
+//            orderDetailRepository.save(orderDetail);
+//            orderDetailList.add(orderDetail);
+//            cartService.deleteItemFromCart(cartItemDTO.getId(), user);
+//        }
+//
+//        cartDTO.setCartItemDTOList(new ArrayList<>());
+//        cartDTO.setTotalPrice(0);
+//        order.setOrderDetailList(orderDetailList);
+//
+//        cartService.saveCart(cartDTO, user);
+//        orderRepository.save(order);
+//    }
 
     public Session createSession(List<CheckoutItemDTO> checkoutItemDTOList) throws StripeException {
        // success and failure urls

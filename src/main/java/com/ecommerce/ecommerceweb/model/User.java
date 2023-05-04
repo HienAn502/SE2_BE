@@ -22,17 +22,14 @@ public class User {
 
     @OneToOne(cascade = CascadeType.ALL,mappedBy = "user")
     private Cart cart;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    private List<Order> orderList;
 
-    public User(String firstName, String lastName,String phoneNumber, String email, String password, Cart cart, List<Order> orderList) {
+    public User(String firstName, String lastName,String phoneNumber, String email, String password, Cart cart) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.password = password;
         this.cart = cart;
-        this.orderList = orderList;
     }
 
     public User() {
@@ -93,13 +90,5 @@ public class User {
 
     public void setCart(Cart cart) {
         this.cart = cart;
-    }
-
-    public List<Order> getOrderList() {
-        return orderList;
-    }
-
-    public void setOrderList(List<Order> orderList) {
-        this.orderList = orderList;
     }
 }

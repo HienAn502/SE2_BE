@@ -49,7 +49,7 @@ public class UserService {
         cart.setCreatedDate(new Date());
 
         // save user to db
-        User user = new User(signupDTO.getFirstName(), signupDTO.getLastName(), signupDTO.getPhoneNumber(), signupDTO.getEmail(), encryptedPassword,cart,  new ArrayList<>());
+        User user = new User(signupDTO.getFirstName(), signupDTO.getLastName(), signupDTO.getPhoneNumber(), signupDTO.getEmail(), encryptedPassword,cart);
         cart.setUser(user);
         cartRepository.save(cart);
         userRepository.save(user);
